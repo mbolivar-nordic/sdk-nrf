@@ -1,3 +1,34 @@
-&uart0 {
-	tx-pin = <20>;
+/*
+ * Enable spi1 and configure the BME280 sensor connection.
+ * (We can't use SPI0 as that conflicts with UART0.)
+ */
+&spi1 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	sck-pin = <21>;  /* P0.21 */
+	miso-pin = <22>; /* P0.22 */
+	mosi-pin = <23>; /* P0.23 */
+	cs-gpios = <&gpio0 24 0>, <&gpio0 25 0>; /* two chip select pins,
+						  * just for example */
+
+	/*
+	 * The "@0" here means "index 0 in the chip select array" above,
+	 * i.e. gpio0 pin 24, or P0.24. Index 1 would be P0.25.
+	 *
+	 * The "0" after 24 and 25 above are flags fields which are
+	 * always 0 on nRF SPI cs-gpios properties.
+	 */
+	bme280_spi: bme280@0 {
+		label = "BME280_SPI";
+		compatible = "bosch,bme280";
+		reg = <0>;	/* the reg value must match the @0 */
+		spi-max-frequency = <(1 * 1000 * 1000)>; /* 1 MHz max SCK */
+	};
+
+	/* Another SPI device with chip select 1 could be here. */
+};
+
+&{/aliases} {
+	/* Aliases make it more convenient to access devicetree data. */
+	my-sensor = &bme280_spi;
 };
