@@ -38,7 +38,9 @@ was renamed ``nrf9160dk_nrf9160`` in Zephyr master and a future version of NCS.
 Sample Output
 =============
 
-The current version of the code just prints ``Hello Americas FAEs and sales!``
-to the UART connected to the Segger interface MCU.
+This application prints temperature sensor data::
 
-Subsequent commits will change that.
+   NCS application main() started.
+   Found sensor <SOME_SENSOR_NAME>
+   Temperature reading 0: 23.70000 °C
+   Temperature reading 1: 23.70000 °C
