@@ -18,6 +18,7 @@
 #include "multithreading_lock.h"
 
 #define SOC_NV_FLASH_NODE DT_NODELABEL(flash0)
+#define SOC_NV_FLASH_CONTROLLER_NODE DT_NODELABEL(flash_controller)
 
 /* NOTE: The driver supports unaligned writes, but some file systems (like FCB)
  * may use the driver sub-optimally as a result. Word aligned writes are faster
@@ -366,6 +367,6 @@ static int nrf_btctrl_flash_init(struct device *dev)
 	return 0;
 }
 
-DEVICE_INIT(nrf_btctrl_flash, DT_LABEL(SOC_NV_FLASH_NODE),
+DEVICE_INIT(nrf_btctrl_flash, DT_LABEL(SOC_NV_FLASH_CONTROLLER_NODE),
 	    nrf_btctrl_flash_init, NULL, NULL, POST_KERNEL,
 	    CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
