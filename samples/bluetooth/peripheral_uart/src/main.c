@@ -54,8 +54,8 @@ static bool rx_disabled;
 
 struct uart_data_t {
 	void  *fifo_reserved;
-	u8_t    data[UART_BUF_SIZE];
-	u16_t   len;
+	uint8_t    data[UART_BUF_SIZE];
+	uint16_t   len;
 };
 
 static K_FIFO_DEFINE(fifo_uart_tx_data);
@@ -116,7 +116,7 @@ static void uart_cb(struct device *uart)
 	if (uart_irq_tx_ready(uart)) {
 		struct uart_data_t *buf =
 			k_fifo_get(&fifo_uart_tx_data, K_NO_WAIT);
-		u16_t written = 0;
+		uint16_t written = 0;
 
 		/* Nothing in the FIFO, nothing to send */
 		if (!buf) {
@@ -157,7 +157,7 @@ static int init_uart(void)
 	return 0;
 }
 
-static void connected(struct bt_conn *conn, u8_t err)
+static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -174,7 +174,7 @@ static void connected(struct bt_conn *conn, u8_t err)
 	dk_set_led_on(CON_STATUS_LED);
 }
 
-static void disconnected(struct bt_conn *conn, u8_t reason)
+static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -296,8 +296,8 @@ static struct bt_conn_auth_cb conn_auth_callbacks = {
 static struct bt_conn_auth_cb conn_auth_callbacks;
 #endif
 
-static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
-			  u16_t len)
+static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
+			  uint16_t len)
 {
 	char addr[BT_ADDR_LE_STR_LEN] = {0};
 
@@ -305,7 +305,7 @@ static void bt_receive_cb(struct bt_conn *conn, const u8_t *const data,
 
 	printk("Received data from: %s\n", addr);
 
-	for (u16_t pos = 0; pos != len;) {
+	for (uint16_t pos = 0; pos != len;) {
 		struct uart_data_t *tx = k_malloc(sizeof(*tx));
 
 		if (!tx) {
@@ -369,9 +369,9 @@ static void num_comp_reply(bool accept)
 	auth_conn = NULL;
 }
 
-void button_changed(u32_t button_state, u32_t has_changed)
+void button_changed(uint32_t button_state, uint32_t has_changed)
 {
-	u32_t buttons = button_state & has_changed;
+	uint32_t buttons = button_state & has_changed;
 
 	if (auth_conn) {
 		if (buttons & KEY_PASSKEY_ACCEPT) {

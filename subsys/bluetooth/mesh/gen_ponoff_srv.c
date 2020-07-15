@@ -13,7 +13,7 @@
 
 /** Persistent storage handling */
 struct ponoff_settings_data {
-	u8_t on_power_up;
+	uint8_t on_power_up;
 	bool on_off;
 } __packed;
 
@@ -26,7 +26,7 @@ static int store(struct bt_mesh_ponoff_srv *srv,
 
 	struct ponoff_settings_data data;
 
-	data.on_power_up = (u8_t)srv->on_power_up;
+	data.on_power_up = (uint8_t)srv->on_power_up;
 
 	switch (srv->on_power_up) {
 	case BT_MESH_ON_POWER_UP_OFF:

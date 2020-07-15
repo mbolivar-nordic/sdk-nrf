@@ -68,7 +68,7 @@ static bool protocol_boot;
 static struct config_channel_state cfg_chan;
 static struct k_delayed_work notify_secured;
 
-static void broadcast_subscription_change(u8_t report_id, bool enabled)
+static void broadcast_subscription_change(uint8_t report_id, bool enabled)
 {
 	bool boot = (report_id == REPORT_ID_BOOT_MOUSE) ||
 		    (report_id == REPORT_ID_BOOT_KEYBOARD);
@@ -125,7 +125,7 @@ static void pm_evt_handler(enum bt_gatt_hids_pm_evt evt, struct bt_conn *conn)
 
 static void sync_notif_handler(const struct hid_notification_event *event)
 {
-	u8_t report_id = event->report_id;
+	uint8_t report_id = event->report_id;
 	bool enabled = event->enabled;
 
 	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(report_enabled));
@@ -140,7 +140,7 @@ static void sync_notif_handler(const struct hid_notification_event *event)
 	broadcast_subscription_change(report_id, enabled);
 }
 
-static void async_notif_handler(u8_t report_id, enum bt_gatt_hids_notif_evt evt)
+static void async_notif_handler(uint8_t report_id, enum bt_gatt_hids_notif_evt evt)
 {
 	struct hid_notification_event *event = new_hid_notification_event();
 
@@ -150,7 +150,7 @@ static void async_notif_handler(u8_t report_id, enum bt_gatt_hids_notif_evt evt)
 	EVENT_SUBMIT(event);
 }
 
-static void hid_report_sent(const struct bt_conn *conn, u8_t report_id, bool error)
+static void hid_report_sent(const struct bt_conn *conn, uint8_t report_id, bool error)
 {
 	struct hid_report_sent_event *event = new_hid_report_sent_event();
 
@@ -282,7 +282,7 @@ static int module_init(void)
 	size_t feat_pos = 0;
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT)) {
-		static const u8_t mask[] = REPORT_MASK_MOUSE;
+		static const uint8_t mask[] = REPORT_MASK_MOUSE;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
 			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_MOUSE, 8)));
 		BUILD_ASSERT(REPORT_ID_MOUSE < ARRAY_SIZE(report_index));
@@ -297,7 +297,7 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)) {
-		static const u8_t mask[] = REPORT_MASK_KEYBOARD_KEYS;
+		static const uint8_t mask[] = REPORT_MASK_KEYBOARD_KEYS;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
 			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_KEYBOARD_KEYS, 8)));
 		BUILD_ASSERT(REPORT_ID_KEYBOARD_KEYS < ARRAY_SIZE(report_index));
@@ -312,7 +312,7 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT)) {
-		static const u8_t mask[] = REPORT_MASK_SYSTEM_CTRL;
+		static const uint8_t mask[] = REPORT_MASK_SYSTEM_CTRL;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
 			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_SYSTEM_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_SYSTEM_CTRL < ARRAY_SIZE(report_index));
@@ -327,7 +327,7 @@ static int module_init(void)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT)) {
-		static const u8_t mask[] = REPORT_MASK_CONSUMER_CTRL;
+		static const uint8_t mask[] = REPORT_MASK_CONSUMER_CTRL;
 		BUILD_ASSERT((sizeof(mask) == 0) ||
 			     (sizeof(mask) == ceiling_fraction(REPORT_SIZE_CONSUMER_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_CONSUMER_CTRL < ARRAY_SIZE(report_index));
@@ -416,7 +416,7 @@ static void send_hid_report(const struct hid_report_event *event)
 	__ASSERT_NO_MSG(cur_conn);
 	__ASSERT_NO_MSG(event->dyndata.size > 0);
 
-	u8_t report_id = event->dyndata.data[0];
+	uint8_t report_id = event->dyndata.data[0];
 
 	__ASSERT_NO_MSG(report_id < ARRAY_SIZE(report_index));
 	__ASSERT_NO_MSG(report_sent_cb[report_id]);
@@ -428,7 +428,7 @@ static void send_hid_report(const struct hid_report_event *event)
 		return;
 	}
 
-	const u8_t *buffer = &event->dyndata.data[sizeof(report_id)];
+	const uint8_t *buffer = &event->dyndata.data[sizeof(report_id)];
 	size_t size = event->dyndata.size - sizeof(report_id);
 	int err;
 

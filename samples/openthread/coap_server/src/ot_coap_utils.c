@@ -47,7 +47,7 @@ static otError provisioning_response_send(otMessage *request_message,
 	otError error = OT_ERROR_NO_BUFS;
 	otMessage *response;
 	const void *payload;
-	u16_t payload_size;
+	uint16_t payload_size;
 
 	response = otCoapNewMessage(srv_context.ot, NULL);
 	if (response == NULL) {
@@ -121,7 +121,7 @@ static void provisioning_request_handler(void *context, otMessage *message,
 static void light_request_handler(void *context, otMessage *message,
 				  const otMessageInfo *message_info)
 {
-	u8_t command;
+	uint8_t command;
 
 	ARG_UNUSED(context);
 

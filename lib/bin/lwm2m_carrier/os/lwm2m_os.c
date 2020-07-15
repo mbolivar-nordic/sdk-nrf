@@ -174,7 +174,7 @@ void *lwm2m_os_timer_get(lwm2m_os_timer_handler_t handler)
 {
 	struct lwm2m_work *work = NULL;
 
-	u32_t key = irq_lock();
+	uint32_t key = irq_lock();
 
 	/* Find free delayed work */
 	for (int i = 0; i < ARRAY_SIZE(lwm2m_works); i++) {
@@ -245,7 +245,7 @@ int32_t lwm2m_os_timer_remaining(void *timer)
 
 LOG_MODULE_REGISTER(lwm2m, CONFIG_LOG_DEFAULT_LEVEL);
 
-static const u8_t log_level_lut[] = {
+static const uint8_t log_level_lut[] = {
 	LOG_LEVEL_NONE, /* LWM2M_LOG_LEVEL_NONE */
 	LOG_LEVEL_ERR, /* LWM2M_LOG_LEVEL_ERR */
 	LOG_LEVEL_WRN, /* LWM2M_LOG_LEVEL_WRN */
