@@ -156,4 +156,3 @@ void main(void)
 	LOG_INF("Bluetooth ready. Advertising started.");
 
 }
-

@@ -76,7 +76,7 @@ static int hash_blocks(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 
 	cc310_bl_backend_enable();
 	for (uint32_t i = 0; i < data_len; i += max_chunk_len) {
-		uint8_t const * source = &data[i];
+		uint8_t const *source = &data[i];
 		if (buffer) {
 			memcpy32(buffer, source, chunk_len);
 			source = (uint8_t *)buffer;
@@ -133,7 +133,7 @@ static int sha256_update(nrf_cc310_bl_hash_context_sha256_t *const ctx,
 }
 
 int bl_sha256_update(nrf_cc310_bl_hash_context_sha256_t *ctx,
-		const uint8_t * data, uint32_t data_len)
+		const uint8_t *data, uint32_t data_len)
 {
 	return sha256_update(ctx, data, data_len, true);
 }

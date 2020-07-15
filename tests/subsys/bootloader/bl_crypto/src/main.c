@@ -122,7 +122,7 @@ void test_sha256_string(const uint8_t * input, uint32_t input_len, const uint8_t
 	int rc = 0;
 	uint8_t output[32] = {0};
 	bl_sha256_ctx_t ctx;
-	static uint32_t run_count = 0;
+	static uint32_t run_count;
 
 	rc = bl_sha256_init(&ctx);
 	rc = bl_sha256_update(&ctx, input, input_len);

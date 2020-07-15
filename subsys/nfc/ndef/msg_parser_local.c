@@ -112,4 +112,3 @@ int nfc_ndef_msg_parser_memo_resolve(const uint8_t *result_buf,
 
 	return 0;
 }
-
