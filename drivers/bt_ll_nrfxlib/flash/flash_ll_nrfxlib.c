@@ -69,15 +69,28 @@ static void btctlr_flash_page_layout_get(
 	size_t *layout_size);
 #endif /* defined(CONFIG_FLASH_PAGE_LAYOUT) */
 
+static const struct flash_parameters *
+btctlr_flash_parameters_get(const struct device *dev)
+{
+	ARG_UNUSED(dev);
+
+	static const struct flash_parameters btctlr_flash_parameters = {
+		.write_block_size = FLASH_DRIVER_WRITE_BLOCK_SIZE,
+		.erase_value = 0xff,
+	};
+
+	return &btctlr_flash_parameters;
+}
+
 static const struct flash_driver_api btctrl_flash_api = {
 	.read = btctlr_flash_read,
 	.write = btctlr_flash_write,
 	.erase = btctlr_flash_erase,
 	.write_protection = btctlr_flash_write_protection_set,
+	.get_parameters = btctlr_flash_parameters_get,
 #if defined(CONFIG_FLASH_PAGE_LAYOUT)
 	.page_layout = btctlr_flash_page_layout_get,
 #endif  /* CONFIG_FLASH_PAGE_LAYOUT */
-	.write_block_size = FLASH_DRIVER_WRITE_BLOCK_SIZE
 };
 
 
