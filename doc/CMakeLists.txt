@@ -78,6 +78,7 @@ set(CONFIGURATION_RST_OUT ${CONFIGURATION_BINARY_DIR}/rst)
 # HTML output directory
 set(HTML_DIR ${CMAKE_BINARY_DIR}/html)
 file(MAKE_DIRECTORY ${HTML_DIR})
+set(ZEPHYR_OUTPUT ${HTML_DIR}/zephyr)
 
 # Known issues script
 set(KI_SCRIPT ${ZEPHYR_BASE}/scripts/filter-known-issues.py)
@@ -240,7 +241,7 @@ set(NRF_SPHINX_BUILD_HTML_COMMAND
   ${CMAKE_COMMAND} -E env
   ZEPHYR_BASE=${ZEPHYR_BASE}
   ZEPHYR_BUILD=${ZEPHYR_BINARY_DIR}
-  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
+  ZEPHYR_OUTPUT=${ZEPHYR_OUTPUT}
   NRF_BASE=${NRF_BASE}
   NRF_BUILD=${NRF_BINARY_DIR}
   NRF_OUTPUT=${HTML_DIR}/nrf
@@ -309,7 +310,7 @@ add_custom_target(
   mcuboot-html
   COMMAND ${CMAKE_COMMAND} -E env
   NRF_BASE=${NRF_BASE}
-  ZEPHYR_OUTPUT=${HTML_DIR}/zephyr
+  ZEPHYR_OUTPUT=${ZEPHYR_OUTPUT}
   NRF_OUTPUT=${HTML_DIR}/nrf
   NRF_RST_SRC=${NRF_RST_OUT}/doc/nrf
   MCUBOOT_OUTPUT=${HTML_DIR}/mcuboot
@@ -503,8 +504,9 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${GEN_DEVICETREE_
 # index page to the output directory. We don't need extract_content.py
 # because there's just one file.
 
-set(CONFIGURATION_DOC_DIR ${NRF_BASE}/doc/config)
-set(CONFIGURATION_INDEX_IN ${CONFIGURATION_DOC_DIR}/index.rst)
+set(CONFIGURATION_PASS_1_DOC_DIR ${NRF_BASE}/doc/config-pass-1)
+set(CONFIGURATION_PASS_2_DOC_DIR ${NRF_BASE}/doc/config-pass-2)
+set(CONFIGURATION_INDEX_IN ${CONFIGURATION_PASS_1_DOC_DIR}/index.rst)
 set(CONFIGURATION_INDEX_OUT ${CONFIGURATION_RST_OUT}/index.rst)
 
 set(CONFIGURATION_EXTRACT_CONTENT_COMMAND
@@ -519,30 +521,68 @@ add_custom_target(
   DEPENDS ${CONFIGURATION_INDEX_IN}
 )
 
-add_custom_target(
-  config-html
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CONFIGURATION_BINARY_DIR}
-  COMMAND ${CMAKE_COMMAND} -E env
-    ZEPHYR_BASE=${ZEPHYR_BASE}
-    ZEPHYR_BUILD=${CMAKE_CURRENT_BINARY_DIR}
-      ${SPHINXBUILD}
-        -b html
-        -c ${NRF_BASE}/doc/config
-        -d ${CONFIGURATION_BINARY_DIR}/doctrees
-        -N
-        -w ${CONFIGURATION_BINARY_DIR}/sphinx.log
-        # The Kconfig and devicetree reference builds don't use
-        # Breathe, so we can safely parallelize it
-        -j auto
-        ${CONFIGURATION_RST_OUT}
-        ${HTML_DIR}/config
+# This target can be used to build the HTML pages for the
+# Configuration Reference using sphinx-build. We invoke it twice:
+#
+# - first, with just the kconfig RST content (which has no dependencies
+#   on other docsets), and
+#
+# - again after generating both the zephyr objects.inv file and the DT
+#   bindings index (the DT bindings need to be able to link to Zephyr
+#   pages)
+#
+# A cleaner way to do the same thing would be to use the 'inventory'
+# builder on the Zephyr docset once, before generating the
+# configuration reference. We're doing it this way instead because
+# that takes as long as building the zephyr docs themselves, which is
+# the slowest part of the build. Hopefully this doesn't break anything.
+
+function(get_config_pass_command out_var pass)
+  set(${out_var}
+                ${SPHINXBUILD}
+                -b html
+                -c ${CONFIGURATION_PASS_${pass}_DOC_DIR}
+                -d ${CONFIGURATION_BINARY_DIR}/doctrees
+                -N
+                -w ${CONFIGURATION_BINARY_DIR}/sphinx.log
+                # The Kconfig and devicetree reference builds don't use
+                # Breathe, so we can safely parallelize it even on older
+                # versions of breathe still in use by CI.
+                -j auto
+                ${CONFIGURATION_RST_OUT}
+                ${CONFIGURATION_OUTPUT}
+      PARENT_SCOPE)
+endfunction()
+
+get_config_pass_command(CONFIG_HTML_PASS_1_COMMAND 1)
+get_config_pass_command(CONFIG_HTML_PASS_2_COMMAND 2)
+
+set(CONFIG_HTML_ENV_VARS
+  ZEPHYR_OUTPUT=${ZEPHYR_OUTPUT}
+  CONFIGURATION_OUTPUT=${CONFIGURATION_OUTPUT}
+  CONFIGURATION_RST_OUT=${CONFIGURATION_RST_OUT}
 )
-add_dependencies(config-html kconfig-content devicetree-content config-index-content)
+
+add_custom_target(
+  config-html-pass-1
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CONFIGURATION_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -E env ${CONFIG_HTML_ENV_VARS} ${CONFIG_HTML_PASS_1_COMMAND}
+)
+
+add_dependencies(config-html-pass-1 kconfig-content config-index-content)
+
+add_custom_target(
+  config-html-pass-2
+  COMMAND ${CMAKE_COMMAND} -E env ${CONFIG_HTML_ENV_VARS} ${CONFIG_HTML_PASS_2_COMMAND}
+)
+
+add_dependencies(config-html-pass-2 devicetree-content)
 
 add_custom_target(
   build-all
-  COMMAND ${CMAKE_MAKE_PROGRAM} config-html
+  COMMAND ${CMAKE_MAKE_PROGRAM} config-html-pass-1
   COMMAND ${CMAKE_MAKE_PROGRAM} zephyr
+  COMMAND ${CMAKE_MAKE_PROGRAM} config-html-pass-2
   COMMAND ${CMAKE_MAKE_PROGRAM} mcuboot
   COMMAND ${CMAKE_MAKE_PROGRAM} nrfxlib-inventory
   COMMAND ${CMAKE_MAKE_PROGRAM} nrf

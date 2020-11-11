@@ -50,7 +50,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       url: https://github.com/mbolivar-nordic/fw-nrfconnect-zephyr
-      revision: doc-configuration-reference
+      revision: doc-configuration-reference-fabio
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above

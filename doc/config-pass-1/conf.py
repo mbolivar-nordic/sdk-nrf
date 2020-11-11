@@ -1,6 +1,8 @@
-# Configuration Reference documentation build configuration file
+# Configuration Reference documentation build configuration file, pass 1.
+# See nrf/doc/CMakeLists.txt for details.
 
 import os
+import sys
 
 NRF_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
