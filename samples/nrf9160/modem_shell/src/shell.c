@@ -215,12 +215,12 @@ static void disable_uarts(void)
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER, NULL, NULL);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
 	}
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER, NULL, NULL);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_LOW_POWER);
 	}
 }
 
@@ -230,12 +230,12 @@ static void enable_uarts(void)
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart0)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
 	}
 
 	uart_dev = device_get_binding(DT_LABEL(DT_NODELABEL(uart1)));
 	if (uart_dev) {
-		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE, NULL, NULL);
+		pm_device_state_set(uart_dev, PM_DEVICE_STATE_ACTIVE);
 	}
 }
 
