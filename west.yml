@@ -226,3 +226,4 @@ manifest:
     path: nrf
     # This line configures west extensions.
     west-commands: scripts/west-commands.yml
+    import: submanifests
