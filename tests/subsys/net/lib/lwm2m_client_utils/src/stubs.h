@@ -26,8 +26,8 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_get_bool, const struct lwm2m_obj_path *, bool
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_opaque, const struct lwm2m_obj_path *, const char *,
 			uint16_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_string, const struct lwm2m_obj_path *, const char *)
-DECLARE_FAKE_VALUE_FUNC(int, lwm2m_send, struct lwm2m_ctx *,
-			const struct lwm2m_obj_path *, uint8_t, bool);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_send_cb, struct lwm2m_ctx *,
+			const struct lwm2m_obj_path *, uint8_t, lwm2m_send_cb_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_delete_object_inst, const struct lwm2m_obj_path *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_register_delete_callback, uint16_t,
 			lwm2m_engine_user_cb_t);
@@ -104,7 +104,7 @@ DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct ne
 	FUNC(lwm2m_set_s32)                             \
 	FUNC(lwm2m_set_opaque)                          \
 	FUNC(lwm2m_set_string)                          \
-	FUNC(lwm2m_send)                                \
+	FUNC(lwm2m_send_cb)                             \
 	FUNC(lwm2m_delete_object_inst)                  \
 	FUNC(lwm2m_register_delete_callback)            \
 	FUNC(lwm2m_register_create_callback)            \
