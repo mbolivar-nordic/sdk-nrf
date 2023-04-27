@@ -81,9 +81,14 @@ static struct env_sensor accel_sensor_lp = {
 	.dev = DEVICE_DT_GET(DT_ALIAS(accelerometer)),
 };
 
-static struct sensor_trigger adxl362_sensor_trigger = {
+static struct sensor_trigger adxl362_sensor_trigger_motion = {
 		.chan = SENSOR_CHAN_ACCEL_XYZ,
 		.type = SENSOR_TRIG_MOTION
+};
+
+static struct sensor_trigger adxl362_sensor_trigger_stationary = {
+		.chan = SENSOR_CHAN_ACCEL_XYZ,
+		.type = SENSOR_TRIG_STATIONARY
 };
 
 #if defined(CONFIG_EXTERNAL_SENSORS_IMPACT_DETECTION)
@@ -444,12 +449,11 @@ int ext_sensors_accelerometer_trigger_callback_set(bool enable)
 
 	sensor_trigger_handler_t handler = enable ? accelerometer_trigger_handler : NULL;
 
-	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger, handler);
+	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_motion, handler);
 	if (err) {
 		goto error;
 	}
-	trig.type = SENSOR_TRIG_STATIONARY;
-	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger, handler);
+	err = sensor_trigger_set(accel_sensor_lp.dev, &adxl362_sensor_trigger_stationary, handler);
 	if (err) {
 		goto error;
 	}
